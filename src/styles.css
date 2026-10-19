@@ -1,0 +1,165 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Heebo:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --ink-black: #0b0f14;
+  --warm-ivory: #f4f7fb;
+  --accent: #1e88e5;
+  --walnut: #0f5f9d;
+  --success-green: #2e7d5a;
+  --error-red: #b84a4a;
+  --body-text: #f4f7fb;
+  --muted-text: #aab7c8;
+  --panel-soft: rgba(28, 48, 68, 0.42);
+  --panel-strong: rgba(14, 24, 35, 0.94);
+  --border-soft: rgba(174, 205, 235, 0.16);
+  --shadow-soft: 0 18px 38px rgba(0, 0, 0, 0.22);
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  background:
+    radial-gradient(circle at top, rgba(30, 136, 229, 0.2), transparent 34%),
+    linear-gradient(180deg, #101924 0%, #0b0f14 100%);
+  color: var(--body-text);
+  font-family: 'Manrope', 'Segoe UI', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  line-height: 1.5;
+}
+
+html[dir='rtl'] input[type='text'],
+html[dir='rtl'] textarea {
+  direction: rtl;
+  text-align: right;
+}
+
+html[dir='rtl'] input[type='tel'],
+html[dir='rtl'] input[type='time'],
+html[dir='rtl'] .time-slot,
+html[dir='rtl'] [dir='ltr'] {
+  direction: ltr;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: 'Bebas Neue', 'Segoe UI', sans-serif;
+  letter-spacing: 0;
+}
+
+/* Hebrew needs a typeface with Hebrew glyphs; English keeps the original pairing above. */
+html[lang='he'] body {
+  font-family: 'Heebo', 'Segoe UI', sans-serif;
+}
+
+html[lang='he'] h1,
+html[lang='he'] h2,
+html[lang='he'] h3,
+html[lang='he'] h4 {
+  font-family: 'Heebo', 'Segoe UI', sans-serif;
+  font-weight: 800;
+  letter-spacing: normal;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+}
+
+.page-shell {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 28px 0 72px;
+}
+
+.section-title {
+  font-size: clamp(2rem, 3.5vw, 3.5rem);
+  margin: 0;
+}
+
+.primary-button,
+.secondary-button {
+  min-height: 48px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  padding: 0 20px;
+  font-weight: 700;
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.primary-button {
+  background: var(--accent);
+  color: var(--ink-black);
+}
+
+.secondary-button {
+  background: rgba(244, 247, 251, 0.1);
+  color: var(--warm-ivory);
+  border-color: var(--border-soft);
+}
+
+.primary-button:hover,
+.secondary-button:hover,
+.primary-button:focus-visible,
+.secondary-button:focus-visible {
+  transform: translateY(-1px);
+}
+
+.primary-button:focus-visible,
+.secondary-button:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline: 3px solid rgba(30, 136, 229, 0.5);
+  outline-offset: 3px;
+}
+
+.primary-button:disabled,
+.secondary-button:disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.surface-card {
+  border-radius: 16px;
+  border: 1px solid var(--border-soft);
+  background: var(--panel-strong);
+  box-shadow: var(--shadow-soft);
+}
+
+@media (max-width: 920px) {
+  .page-shell {
+    width: min(100% - 24px, 1180px);
+    padding: 20px 0 96px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

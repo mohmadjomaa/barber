@@ -1,0 +1,220 @@
+import { injectQuery as __vite__injectQuery } from "/@vite/client";import { createHotContext as __vite__createHotContext } from "/@vite/client";import.meta.hot = __vite__createHotContext("/main.js");import {
+  BookingStateService,
+  booking_state_exports
+} from "/chunk-PGYJDOMG.js";
+import {
+  Auth
+} from "/chunk-45DTTQJC.js";
+import "/chunk-CZJLB7T5.js";
+
+// src/main.ts
+import { bootstrapApplication } from "/@fs/C:/Users/wipes/barber-booking-system/.angular/cache/21.2.7/barber-booking-system/vite/deps/@angular_platform-browser.js?v=170a72db";
+
+// src/app/app.config.ts
+import { provideBrowserGlobalErrorListeners } from "/@fs/C:/Users/wipes/barber-booking-system/.angular/cache/21.2.7/barber-booking-system/vite/deps/@angular_core.js?v=170a72db";
+import { provideHttpClient, withInterceptors } from "/@fs/C:/Users/wipes/barber-booking-system/.angular/cache/21.2.7/barber-booking-system/vite/deps/@angular_common_http.js?v=170a72db";
+import { provideRouter, withInMemoryScrolling } from "/@fs/C:/Users/wipes/barber-booking-system/.angular/cache/21.2.7/barber-booking-system/vite/deps/@angular_router.js?v=170a72db";
+
+// src/app/services/admin-auth.guard.ts
+import { inject } from "/@fs/C:/Users/wipes/barber-booking-system/.angular/cache/21.2.7/barber-booking-system/vite/deps/@angular_core.js?v=170a72db";
+import { Router } from "/@fs/C:/Users/wipes/barber-booking-system/.angular/cache/21.2.7/barber-booking-system/vite/deps/@angular_router.js?v=170a72db";
+var adminAuthGuard = () => {
+  const auth = inject(Auth);
+  const router = inject(Router);
+  return auth.isLoggedIn ? true : router.createUrlTree(["/admin/login"]);
+};
+var redirectAuthenticatedAdmin = () => {
+  const auth = inject(Auth);
+  const router = inject(Router);
+  return auth.isLoggedIn ? router.createUrlTree(["/admin"]) : true;
+};
+
+// src/app/app.routes.ts
+var routes = [
+  {
+    path: "",
+    loadComponent: () => import("/chunk-A4B4IQ57.js").then((m) => m.Home)
+  },
+  {
+    path: "services",
+    // تبدأ رحلة العميل هنا: اختيار الخدمة ثم التاريخ والوقت ثم التأكيد.
+    loadComponent: () => import("/chunk-KIG2GOIJ.js").then((m) => m.Services)
+  },
+  // هذه الروابط القديمة تبقى متوافقة مع الروابط المحفوظة، لكن تستخدم تدفق الحجز الموحد.
+  { path: "barbers", redirectTo: "/services", pathMatch: "full" },
+  { path: "booking", redirectTo: "/services", pathMatch: "full" },
+  { path: "customer-info", redirectTo: "/services", pathMatch: "full" },
+  {
+    path: "success",
+    loadComponent: () => import("/chunk-NSUODGI5.js").then((m) => m.Success)
+  },
+  { path: "dashboard", redirectTo: "/admin", pathMatch: "full" },
+  {
+    path: "admin/login",
+    // لا نعرض نموذج الدخول مجدداً إذا كانت جلسة Admin في المتصفح ما زالت صالحة.
+    canActivate: [redirectAuthenticatedAdmin],
+    loadComponent: () => import("/chunk-CLQ5Z5O4.js").then((m) => m.AdminLogin)
+  },
+  {
+    path: "admin",
+    // الحارس يمنع فتح الواجهة الإدارية محلياً؛ أما التحقق الحاسم من JWT فيتم بالخادم.
+    canActivate: [adminAuthGuard],
+    loadComponent: () => import("/chunk-BWV3JU24.js").then((m) => m.Admin)
+  },
+  { path: "**", redirectTo: "" }
+];
+
+// src/app/services/admin-auth.interceptor.ts
+var adminAuthInterceptor = (req, next) => {
+  const token = sessionStorage.getItem("adminToken");
+  if (!token || !/(^|\/\/[^/]+)\/api\/admin(?:\/|$)/.test(req.url)) {
+    return next(req);
+  }
+  return next(req.clone({
+    setHeaders: {
+      Authorization: `Bearer ${token}`
+    }
+  }));
+};
+
+// src/app/app.config.ts
+var appConfig = {
+  providers: [
+    provideBrowserGlobalErrorListeners(),
+    // كل طلبات HttpClient تمر من interceptor الذي يضيف JWT لمسارات Admin فقط.
+    // طلبات الحجز العامة لا تحتاج رمز إدارة.
+    provideHttpClient(withInterceptors([adminAuthInterceptor])),
+    // المسارات lazy-loaded لتفادي تحميل صفحات Admin والحجز قبل أن يطلبها المستخدم.
+    provideRouter(routes, withInMemoryScrolling({
+      anchorScrolling: "enabled",
+      scrollPositionRestoration: "enabled"
+    }))
+  ]
+};
+
+// src/app/app.ts
+import { Component as Component2 } from "/@fs/C:/Users/wipes/barber-booking-system/.angular/cache/21.2.7/barber-booking-system/vite/deps/@angular_core.js?v=170a72db";
+import { RouterOutlet } from "/@fs/C:/Users/wipes/barber-booking-system/.angular/cache/21.2.7/barber-booking-system/vite/deps/@angular_router.js?v=170a72db";
+
+// src/app/shared/navbar/navbar.ts
+import { CommonModule } from "/@fs/C:/Users/wipes/barber-booking-system/.angular/cache/21.2.7/barber-booking-system/vite/deps/@angular_common.js?v=170a72db";
+import { Component } from "/@fs/C:/Users/wipes/barber-booking-system/.angular/cache/21.2.7/barber-booking-system/vite/deps/@angular_core.js?v=170a72db";
+import { RouterLink } from "/@fs/C:/Users/wipes/barber-booking-system/.angular/cache/21.2.7/barber-booking-system/vite/deps/@angular_router.js?v=170a72db";
+import * as i0 from "/@fs/C:/Users/wipes/barber-booking-system/.angular/cache/21.2.7/barber-booking-system/vite/deps/@angular_core.js?v=170a72db";
+import * as i2 from "/@fs/C:/Users/wipes/barber-booking-system/.angular/cache/21.2.7/barber-booking-system/vite/deps/@angular_common.js?v=170a72db";
+function Navbar_button_8_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r1 = i0.\u0275\u0275getCurrentView();
+    i0.\u0275\u0275elementStart(0, "button", 7);
+    i0.\u0275\u0275listener("click", function Navbar_button_8_Template_button_click_0_listener() {
+      i0.\u0275\u0275restoreView(_r1);
+      const ctx_r1 = i0.\u0275\u0275nextContext();
+      return i0.\u0275\u0275resetView(ctx_r1.repeatLastBooking());
+    });
+    i0.\u0275\u0275text(1, " Book Same Again ");
+    i0.\u0275\u0275elementEnd();
+  }
+}
+var Navbar = class _Navbar {
+  bookingState;
+  constructor(bookingState) {
+    this.bookingState = bookingState;
+  }
+  get lastBooking() {
+    return this.bookingState.getLastBooking();
+  }
+  repeatLastBooking() {
+    this.bookingState.applyLastBooking();
+  }
+  startBooking() {
+    this.bookingState.startNewBooking({ barberPreference: "any" });
+    this.bookingState.track("start_booking", { mode: "navbar_cta" });
+  }
+  static \u0275fac = function Navbar_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _Navbar)(i0.\u0275\u0275directiveInject(BookingStateService));
+  };
+  static \u0275cmp = /* @__PURE__ */ i0.\u0275\u0275defineComponent({ type: _Navbar, selectors: [["app-navbar"]], decls: 11, vars: 1, consts: [[1, "custom-navbar"], [1, "nav-shell"], ["routerLink", "/", "aria-label", "North Barber home", 1, "logo"], ["aria-hidden", "true", 1, "logo-mark"], [1, "nav-actions"], ["type", "button", "class", "secondary-button quick-book", 3, "click", 4, "ngIf"], ["routerLink", "/services", 1, "primary-button", "nav-cta", 3, "click"], ["type", "button", 1, "secondary-button", "quick-book", 3, "click"]], template: function Navbar_Template(rf, ctx) {
+    if (rf & 1) {
+      i0.\u0275\u0275elementStart(0, "nav", 0)(1, "div", 1)(2, "a", 2)(3, "span", 3);
+      i0.\u0275\u0275text(4, "NB");
+      i0.\u0275\u0275elementEnd();
+      i0.\u0275\u0275elementStart(5, "span");
+      i0.\u0275\u0275text(6, "North Barber");
+      i0.\u0275\u0275elementEnd()();
+      i0.\u0275\u0275elementStart(7, "div", 4);
+      i0.\u0275\u0275template(8, Navbar_button_8_Template, 2, 0, "button", 5);
+      i0.\u0275\u0275elementStart(9, "a", 6);
+      i0.\u0275\u0275listener("click", function Navbar_Template_a_click_9_listener() {
+        return ctx.startBooking();
+      });
+      i0.\u0275\u0275text(10, "Book Appointment");
+      i0.\u0275\u0275elementEnd()()()();
+    }
+    if (rf & 2) {
+      i0.\u0275\u0275advance(8);
+      i0.\u0275\u0275property("ngIf", ctx.lastBooking);
+    }
+  }, dependencies: [CommonModule, i2.NgClass, i2.NgComponentOutlet, i2.NgForOf, i2.NgIf, i2.NgTemplateOutlet, i2.NgStyle, i2.NgSwitch, i2.NgSwitchCase, i2.NgSwitchDefault, i2.NgPlural, i2.NgPluralCase, RouterLink, i2.AsyncPipe, i2.UpperCasePipe, i2.LowerCasePipe, i2.JsonPipe, i2.SlicePipe, i2.DecimalPipe, i2.PercentPipe, i2.TitleCasePipe, i2.CurrencyPipe, i2.DatePipe, i2.I18nPluralPipe, i2.I18nSelectPipe, i2.KeyValuePipe], styles: ['\n.custom-navbar[_ngcontent-%COMP%] {\n  position: sticky;\n  top: 0;\n  z-index: 1000;\n  -webkit-backdrop-filter: blur(14px);\n  backdrop-filter: blur(14px);\n  background: rgba(11, 15, 20, 0.92);\n  border-bottom: 1px solid rgba(244, 247, 251, 0.08);\n}\n.nav-shell[_ngcontent-%COMP%] {\n  width: min(1180px, calc(100% - 32px));\n  margin: 0 auto;\n  min-height: 76px;\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 20px;\n}\n.logo[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 10px;\n  font-family:\n    "Bebas Neue",\n    "Segoe UI",\n    sans-serif;\n  font-size: 2rem;\n  color: var(--accent);\n  text-decoration: none;\n}\n.logo-mark[_ngcontent-%COMP%] {\n  width: 34px;\n  height: 34px;\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  border: 1px solid rgba(30, 136, 229, 0.76);\n  border-radius: 10px;\n  background: rgba(30, 136, 229, 0.12);\n  box-shadow: 0 0 18px rgba(30, 136, 229, 0.2);\n  color: var(--warm-ivory);\n  font-size: 1rem;\n  letter-spacing: 0.04em;\n}\n.nav-actions[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n}\n.nav-cta[_ngcontent-%COMP%] {\n  padding: 10px 12px;\n  border-radius: 12px;\n  text-decoration: none;\n  color: var(--warm-ivory);\n}\n.quick-book[_ngcontent-%COMP%] {\n  min-height: 42px;\n  padding: 0 16px;\n}\n.nav-cta[_ngcontent-%COMP%] {\n  min-height: 42px;\n  display: inline-flex;\n  align-items: center;\n  color: var(--ink-black);\n}\n@media (max-width: 920px) {\n  .nav-shell[_ngcontent-%COMP%] {\n    width: min(100% - 24px, 1180px);\n    flex-wrap: wrap;\n    padding: 14px 0;\n  }\n  .nav-actions[_ngcontent-%COMP%] {\n    margin-left: auto;\n  }\n  .quick-book[_ngcontent-%COMP%] {\n    display: none;\n  }\n}\n@media (max-width: 560px) {\n  .nav-shell[_ngcontent-%COMP%] {\n    flex-wrap: nowrap;\n  }\n  .logo[_ngcontent-%COMP%] {\n    font-size: 1.7rem;\n  }\n  .logo-mark[_ngcontent-%COMP%] {\n    width: 30px;\n    height: 30px;\n    border-radius: 9px;\n    font-size: 0.9rem;\n  }\n}\n/*# sourceMappingURL=navbar.css.map */'] });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && i0.\u0275setClassMetadata(Navbar, [{
+    type: Component,
+    args: [{ selector: "app-navbar", standalone: true, imports: [CommonModule, RouterLink], template: '<nav class="custom-navbar">\n  <div class="nav-shell">\n    <a class="logo" routerLink="/" aria-label="North Barber home">\n      <span class="logo-mark" aria-hidden="true">NB</span>\n      <span>North Barber</span>\n    </a>\n\n    <div class="nav-actions">\n      <button\n        *ngIf="lastBooking"\n        type="button"\n        class="secondary-button quick-book"\n        (click)="repeatLastBooking()"\n      >\n        Book Same Again\n      </button>\n      <a class="primary-button nav-cta" routerLink="/services" (click)="startBooking()">Book Appointment</a>\n    </div>\n  </div>\n</nav>\n', styles: ['/* src/app/shared/navbar/navbar.css */\n.custom-navbar {\n  position: sticky;\n  top: 0;\n  z-index: 1000;\n  -webkit-backdrop-filter: blur(14px);\n  backdrop-filter: blur(14px);\n  background: rgba(11, 15, 20, 0.92);\n  border-bottom: 1px solid rgba(244, 247, 251, 0.08);\n}\n.nav-shell {\n  width: min(1180px, calc(100% - 32px));\n  margin: 0 auto;\n  min-height: 76px;\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 20px;\n}\n.logo {\n  display: inline-flex;\n  align-items: center;\n  gap: 10px;\n  font-family:\n    "Bebas Neue",\n    "Segoe UI",\n    sans-serif;\n  font-size: 2rem;\n  color: var(--accent);\n  text-decoration: none;\n}\n.logo-mark {\n  width: 34px;\n  height: 34px;\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  border: 1px solid rgba(30, 136, 229, 0.76);\n  border-radius: 10px;\n  background: rgba(30, 136, 229, 0.12);\n  box-shadow: 0 0 18px rgba(30, 136, 229, 0.2);\n  color: var(--warm-ivory);\n  font-size: 1rem;\n  letter-spacing: 0.04em;\n}\n.nav-actions {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n}\n.nav-cta {\n  padding: 10px 12px;\n  border-radius: 12px;\n  text-decoration: none;\n  color: var(--warm-ivory);\n}\n.quick-book {\n  min-height: 42px;\n  padding: 0 16px;\n}\n.nav-cta {\n  min-height: 42px;\n  display: inline-flex;\n  align-items: center;\n  color: var(--ink-black);\n}\n@media (max-width: 920px) {\n  .nav-shell {\n    width: min(100% - 24px, 1180px);\n    flex-wrap: wrap;\n    padding: 14px 0;\n  }\n  .nav-actions {\n    margin-left: auto;\n  }\n  .quick-book {\n    display: none;\n  }\n}\n@media (max-width: 560px) {\n  .nav-shell {\n    flex-wrap: nowrap;\n  }\n  .logo {\n    font-size: 1.7rem;\n  }\n  .logo-mark {\n    width: 30px;\n    height: 30px;\n    border-radius: 9px;\n    font-size: 0.9rem;\n  }\n}\n/*# sourceMappingURL=navbar.css.map */\n'] }]
+  }], () => [{ type: BookingStateService }], null);
+})();
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && i0.\u0275setClassDebugInfo(Navbar, { className: "Navbar", filePath: "app/shared/navbar/navbar.ts", lineNumber: 13 });
+})();
+(() => {
+  const id = "app%2Fshared%2Fnavbar%2Fnavbar.ts%40Navbar";
+  function Navbar_HmrLoad(t) {
+    import(
+      /* @vite-ignore */
+      __vite__injectQuery(i0.\u0275\u0275getReplaceMetadataURL(id, t, import.meta.url), 'import')
+    ).then((m) => m.default && i0.\u0275\u0275replaceMetadata(Navbar, m.default, [i0, i2, booking_state_exports], [CommonModule, RouterLink, Component], import.meta, id));
+  }
+  (typeof ngDevMode === "undefined" || ngDevMode) && Navbar_HmrLoad(Date.now());
+  (typeof ngDevMode === "undefined" || ngDevMode) && (import.meta.hot && import.meta.hot.on("angular:component-update", (d) => d.id === id && Navbar_HmrLoad(d.timestamp)));
+})();
+
+// src/app/app.ts
+import * as i02 from "/@fs/C:/Users/wipes/barber-booking-system/.angular/cache/21.2.7/barber-booking-system/vite/deps/@angular_core.js?v=170a72db";
+var App = class _App {
+  static \u0275fac = function App_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _App)();
+  };
+  static \u0275cmp = /* @__PURE__ */ i02.\u0275\u0275defineComponent({ type: _App, selectors: [["app-root"]], decls: 3, vars: 0, consts: [[1, "app-shell"]], template: function App_Template(rf, ctx) {
+    if (rf & 1) {
+      i02.\u0275\u0275element(0, "app-navbar");
+      i02.\u0275\u0275elementStart(1, "div", 0);
+      i02.\u0275\u0275element(2, "router-outlet");
+      i02.\u0275\u0275elementEnd();
+    }
+  }, dependencies: [RouterOutlet, Navbar], styles: ["\n.app-shell[_ngcontent-%COMP%] {\n  min-height: calc(100vh - 76px);\n}\n/*# sourceMappingURL=app.css.map */"] });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && i02.\u0275setClassMetadata(App, [{
+    type: Component2,
+    args: [{ selector: "app-root", standalone: true, imports: [RouterOutlet, Navbar], template: '<app-navbar></app-navbar>\r\n\r\n<div class="app-shell">\n  <router-outlet></router-outlet>\n</div>\n', styles: ["/* src/app/app.css */\n.app-shell {\n  min-height: calc(100vh - 76px);\n}\n/*# sourceMappingURL=app.css.map */\n"] }]
+  }], null, null);
+})();
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && i02.\u0275setClassDebugInfo(App, { className: "App", filePath: "app/app.ts", lineNumber: 12 });
+})();
+(() => {
+  const id = "app%2Fapp.ts%40App";
+  function App_HmrLoad(t) {
+    import(
+      /* @vite-ignore */
+      __vite__injectQuery(i02.\u0275\u0275getReplaceMetadataURL(id, t, import.meta.url), 'import')
+    ).then((m) => m.default && i02.\u0275\u0275replaceMetadata(App, m.default, [i02], [RouterOutlet, Navbar, Component2], import.meta, id));
+  }
+  (typeof ngDevMode === "undefined" || ngDevMode) && App_HmrLoad(Date.now());
+  (typeof ngDevMode === "undefined" || ngDevMode) && (import.meta.hot && import.meta.hot.on("angular:component-update", (d) => d.id === id && App_HmrLoad(d.timestamp)));
+})();
+
+// src/main.ts
+bootstrapApplication(App, appConfig).catch((err) => console.error(err));
+
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9tYWluLnRzIiwic3JjL2FwcC9hcHAuY29uZmlnLnRzIiwic3JjL2FwcC9zZXJ2aWNlcy9hZG1pbi1hdXRoLmd1YXJkLnRzIiwic3JjL2FwcC9hcHAucm91dGVzLnRzIiwic3JjL2FwcC9zZXJ2aWNlcy9hZG1pbi1hdXRoLmludGVyY2VwdG9yLnRzIiwic3JjL2FwcC9hcHAudHMiLCJzcmMvYXBwL2FwcC5odG1sIiwic3JjL2FwcC9zaGFyZWQvbmF2YmFyL25hdmJhci50cyIsInNyYy9hcHAvc2hhcmVkL25hdmJhci9uYXZiYXIuaHRtbCJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBib290c3RyYXBBcHBsaWNhdGlvbiB9IGZyb20gJ0Bhbmd1bGFyL3BsYXRmb3JtLWJyb3dzZXInO1xyXG5pbXBvcnQgeyBhcHBDb25maWcgfSBmcm9tICcuL2FwcC9hcHAuY29uZmlnJztcclxuaW1wb3J0IHsgQXBwIH0gZnJvbSAnLi9hcHAvYXBwJztcclxuXHJcbmJvb3RzdHJhcEFwcGxpY2F0aW9uKEFwcCwgYXBwQ29uZmlnKVxyXG4gIC5jYXRjaCgoZXJyKSA9PiBjb25zb2xlLmVycm9yKGVycikpO1xyXG4iLCJpbXBvcnQgeyBBcHBsaWNhdGlvbkNvbmZpZywgcHJvdmlkZUJyb3dzZXJHbG9iYWxFcnJvckxpc3RlbmVycyB9IGZyb20gJ0Bhbmd1bGFyL2NvcmUnO1xuaW1wb3J0IHsgcHJvdmlkZUh0dHBDbGllbnQsIHdpdGhJbnRlcmNlcHRvcnMgfSBmcm9tICdAYW5ndWxhci9jb21tb24vaHR0cCc7XG5pbXBvcnQgeyBwcm92aWRlUm91dGVyLCB3aXRoSW5NZW1vcnlTY3JvbGxpbmcgfSBmcm9tICdAYW5ndWxhci9yb3V0ZXInO1xuXG5pbXBvcnQgeyByb3V0ZXMgfSBmcm9tICcuL2FwcC5yb3V0ZXMnO1xuaW1wb3J0IHsgYWRtaW5BdXRoSW50ZXJjZXB0b3IgfSBmcm9tICcuL3NlcnZpY2VzL2FkbWluLWF1dGguaW50ZXJjZXB0b3InO1xuXG5leHBvcnQgY29uc3QgYXBwQ29uZmlnOiBBcHBsaWNhdGlvbkNvbmZpZyA9IHtcbiAgcHJvdmlkZXJzOiBbXG4gICAgcHJvdmlkZUJyb3dzZXJHbG9iYWxFcnJvckxpc3RlbmVycygpLFxuICAgIC8vINmD2YQg2LfZhNio2KfYqiBIdHRwQ2xpZW50INiq2YXYsSDZhdmGIGludGVyY2VwdG9yINin2YTYsNmKINmK2LbZitmBIEpXVCDZhNmF2LPYp9ix2KfYqiBBZG1pbiDZgdmC2LcuXG4gICAgLy8g2LfZhNio2KfYqiDYp9mE2K3YrNiyINin2YTYudin2YXYqSDZhNinINiq2K3Yqtin2Kwg2LHZhdiyINil2K/Yp9ix2KkuXG4gICAgcHJvdmlkZUh0dHBDbGllbnQod2l0aEludGVyY2VwdG9ycyhbYWRtaW5BdXRoSW50ZXJjZXB0b3JdKSksXG4gICAgLy8g2KfZhNmF2LPYp9ix2KfYqiBsYXp5LWxvYWRlZCDZhNiq2YHYp9iv2Yog2KrYrdmF2YrZhCDYtdmB2K3Yp9iqIEFkbWluINmI2KfZhNit2KzYsiDZgtio2YQg2KPZhiDZiti32YTYqNmH2Kcg2KfZhNmF2LPYqtiu2K/ZhS5cbiAgICBwcm92aWRlUm91dGVyKFxuICAgICAgcm91dGVzLFxuICAgICAgd2l0aEluTWVtb3J5U2Nyb2xsaW5nKHtcbiAgICAgICAgYW5jaG9yU2Nyb2xsaW5nOiAnZW5hYmxlZCcsXG4gICAgICAgIHNjcm9sbFBvc2l0aW9uUmVzdG9yYXRpb246ICdlbmFibGVkJyxcbiAgICAgIH0pLFxuICAgICksXG4gIF0sXG59O1xuIiwiaW1wb3J0IHsgaW5qZWN0IH0gZnJvbSAnQGFuZ3VsYXIvY29yZSc7XG5pbXBvcnQgeyBDYW5BY3RpdmF0ZUZuLCBSb3V0ZXIgfSBmcm9tICdAYW5ndWxhci9yb3V0ZXInO1xuaW1wb3J0IHsgQXV0aCB9IGZyb20gJy4vYXV0aCc7XG5cbmV4cG9ydCBjb25zdCBhZG1pbkF1dGhHdWFyZDogQ2FuQWN0aXZhdGVGbiA9ICgpID0+IHtcbiAgLy8g2YrZhdmG2Lkg2YHYqtitINmI2KfYrNmH2KkgQWRtaW4g2K/ZiNmGINis2YTYs9ipINi12KfZhNit2Kkg2YHZiiDYp9mE2YXYqti12YHYrS4g2KfZhNiu2KfYr9mFINmK2YPYsdixINin2YTYrdmF2KfZitipXG4gIC8vINmE2KPZhiBndWFyZCDZiNit2K/ZhyDZhNinINmK2YXYq9mEINi32KjZgtipINij2YXYp9mGLlxuICBjb25zdCBhdXRoID0gaW5qZWN0KEF1dGgpO1xuICBjb25zdCByb3V0ZXIgPSBpbmplY3QoUm91dGVyKTtcblxuICByZXR1cm4gYXV0aC5pc0xvZ2dlZEluID8gdHJ1ZSA6IHJvdXRlci5jcmVhdGVVcmxUcmVlKFsnL2FkbWluL2xvZ2luJ10pO1xufTtcblxuZXhwb3J0IGNvbnN0IHJlZGlyZWN0QXV0aGVudGljYXRlZEFkbWluOiBDYW5BY3RpdmF0ZUZuID0gKCkgPT4ge1xuICAvLyDZitmF2YbYuSDYo9mGINmK2LHZiSBBZG1pbiDYtdmB2K3YqSDYqtiz2KzZitmEINin2YTYr9iu2YjZhCDZhdix2Kkg2KPYrtix2Ykg2YXYpyDYr9in2YXYqiDYrNmE2LPYqtmHINi12KfZhNit2KkuXG4gIGNvbnN0IGF1dGggPSBpbmplY3QoQXV0aCk7XG4gIGNvbnN0IHJvdXRlciA9IGluamVjdChSb3V0ZXIpO1xuXG4gIHJldHVybiBhdXRoLmlzTG9nZ2VkSW4gPyByb3V0ZXIuY3JlYXRlVXJsVHJlZShbJy9hZG1pbiddKSA6IHRydWU7XG59O1xuIiwiaW1wb3J0IHsgUm91dGVzIH0gZnJvbSAnQGFuZ3VsYXIvcm91dGVyJztcbmltcG9ydCB7IGFkbWluQXV0aEd1YXJkLCByZWRpcmVjdEF1dGhlbnRpY2F0ZWRBZG1pbiB9IGZyb20gJy4vc2VydmljZXMvYWRtaW4tYXV0aC5ndWFyZCc7XG5cbmV4cG9ydCBjb25zdCByb3V0ZXM6IFJvdXRlcyA9IFtcbiAge1xuICAgIHBhdGg6ICcnLFxuICAgIGxvYWRDb21wb25lbnQ6ICgpID0+IGltcG9ydCgnLi9wYWdlcy9ob21lL2hvbWUnKS50aGVuKChtKSA9PiBtLkhvbWUpLFxuICB9LFxuICB7XG4gICAgcGF0aDogJ3NlcnZpY2VzJyxcbiAgICAvLyDYqtio2K/YoyDYsdit2YTYqSDYp9mE2LnZhdmK2YQg2YfZhtinOiDYp9iu2KrZitin2LEg2KfZhNiu2K/ZhdipINir2YUg2KfZhNiq2KfYsdmK2K4g2YjYp9mE2YjZgtiqINir2YUg2KfZhNiq2KPZg9mK2K8uXG4gICAgbG9hZENvbXBvbmVudDogKCkgPT4gaW1wb3J0KCcuL3BhZ2VzL3NlcnZpY2VzL3NlcnZpY2VzJykudGhlbigobSkgPT4gbS5TZXJ2aWNlcyksXG4gIH0sXG4gIC8vINmH2LDZhyDYp9mE2LHZiNin2KjYtyDYp9mE2YLYr9mK2YXYqSDYqtio2YLZiSDZhdiq2YjYp9mB2YLYqSDZhdi5INin2YTYsdmI2KfYqNi3INin2YTZhdit2YHZiNi42KnYjCDZhNmD2YYg2KrYs9iq2K7Yr9mFINiq2K/ZgdmCINin2YTYrdis2LIg2KfZhNmF2YjYrdivLlxuICB7IHBhdGg6ICdiYXJiZXJzJywgcmVkaXJlY3RUbzogJy9zZXJ2aWNlcycsIHBhdGhNYXRjaDogJ2Z1bGwnIH0sXG4gIHsgcGF0aDogJ2Jvb2tpbmcnLCByZWRpcmVjdFRvOiAnL3NlcnZpY2VzJywgcGF0aE1hdGNoOiAnZnVsbCcgfSxcbiAgeyBwYXRoOiAnY3VzdG9tZXItaW5mbycsIHJlZGlyZWN0VG86ICcvc2VydmljZXMnLCBwYXRoTWF0Y2g6ICdmdWxsJyB9LFxuICB7XG4gICAgcGF0aDogJ3N1Y2Nlc3MnLFxuICAgIGxvYWRDb21wb25lbnQ6ICgpID0+IGltcG9ydCgnLi9wYWdlcy9zdWNjZXNzL3N1Y2Nlc3MnKS50aGVuKChtKSA9PiBtLlN1Y2Nlc3MpLFxuICB9LFxuICB7IHBhdGg6ICdkYXNoYm9hcmQnLCByZWRpcmVjdFRvOiAnL2FkbWluJywgcGF0aE1hdGNoOiAnZnVsbCcgfSxcbiAge1xuICAgIHBhdGg6ICdhZG1pbi9sb2dpbicsXG4gICAgLy8g2YTYpyDZhti52LHYtiDZhtmF2YjYsNisINin2YTYr9iu2YjZhCDZhdis2K/Yr9in2Ysg2KXYsNinINmD2KfZhtiqINis2YTYs9ipIEFkbWluINmB2Yog2KfZhNmF2KrYtdmB2K0g2YXYpyDYstin2YTYqiDYtdin2YTYrdipLlxuICAgIGNhbkFjdGl2YXRlOiBbcmVkaXJlY3RBdXRoZW50aWNhdGVkQWRtaW5dLFxuICAgIGxvYWRDb21wb25lbnQ6ICgpID0+IGltcG9ydCgnLi9wYWdlcy9hZG1pbi1sb2dpbi9hZG1pbi1sb2dpbicpLnRoZW4oKG0pID0+IG0uQWRtaW5Mb2dpbiksXG4gIH0sXG4gIHtcbiAgICBwYXRoOiAnYWRtaW4nLFxuICAgIC8vINin2YTYrdin2LHYsyDZitmF2YbYuSDZgdiq2K0g2KfZhNmI2KfYrNmH2Kkg2KfZhNil2K/Yp9ix2YrYqSDZhdit2YTZitin2YvYmyDYo9mF2Kcg2KfZhNiq2K3ZgtmCINin2YTYrdin2LPZhSDZhdmGIEpXVCDZgdmK2KrZhSDYqNin2YTYrtin2K/ZhS5cbiAgICBjYW5BY3RpdmF0ZTogW2FkbWluQXV0aEd1YXJkXSxcbiAgICBsb2FkQ29tcG9uZW50OiAoKSA9PiBpbXBvcnQoJy4vcGFnZXMvYWRtaW4vYWRtaW4nKS50aGVuKChtKSA9PiBtLkFkbWluKSxcbiAgfSxcbiAgeyBwYXRoOiAnKionLCByZWRpcmVjdFRvOiAnJyB9LFxuXTtcbiIsImltcG9ydCB7IEh0dHBJbnRlcmNlcHRvckZuIH0gZnJvbSAnQGFuZ3VsYXIvY29tbW9uL2h0dHAnO1xuXG5leHBvcnQgY29uc3QgYWRtaW5BdXRoSW50ZXJjZXB0b3I6IEh0dHBJbnRlcmNlcHRvckZuID0gKHJlcSwgbmV4dCkgPT4ge1xuICAvLyDZhti22YrZgSBCZWFyZXIgdG9rZW4g2YTZhNmAIEFkbWluIEFQSSDZgdmC2LfYjCDYrdiq2Ykg2YTYpyDZhtix2LPZhCDYqNmK2KfZhtin2Kog2LXZhNin2K3Zitin2KpcbiAgLy8g2KjZhNinINit2KfYrNipINmF2Lkg2YXYs9in2LHYp9iqINin2YTYudmF2YrZhCDYp9mE2LnYp9mF2KkuXG4gIGNvbnN0IHRva2VuID0gc2Vzc2lvblN0b3JhZ2UuZ2V0SXRlbSgnYWRtaW5Ub2tlbicpO1xuXG4gIGlmICghdG9rZW4gfHwgIS8oXnxcXC9cXC9bXi9dKylcXC9hcGlcXC9hZG1pbig/OlxcL3wkKS8udGVzdChyZXEudXJsKSkge1xuICAgIHJldHVybiBuZXh0KHJlcSk7XG4gIH1cblxuICByZXR1cm4gbmV4dChcbiAgICByZXEuY2xvbmUoe1xuICAgICAgc2V0SGVhZGVyczoge1xuICAgICAgICBBdXRob3JpemF0aW9uOiBgQmVhcmVyICR7dG9rZW59YCxcbiAgICAgIH0sXG4gICAgfSksXG4gICk7XG59O1xuIiwiaW1wb3J0IHsgQ29tcG9uZW50IH0gZnJvbSAnQGFuZ3VsYXIvY29yZSc7XHJcbmltcG9ydCB7IFJvdXRlck91dGxldCB9IGZyb20gJ0Bhbmd1bGFyL3JvdXRlcic7XHJcbmltcG9ydCB7IE5hdmJhciB9IGZyb20gJy4vc2hhcmVkL25hdmJhci9uYXZiYXInO1xyXG5cclxuQENvbXBvbmVudCh7XHJcbiAgc2VsZWN0b3I6ICdhcHAtcm9vdCcsXHJcbiAgc3RhbmRhbG9uZTogdHJ1ZSxcclxuICBpbXBvcnRzOiBbUm91dGVyT3V0bGV0LCBOYXZiYXJdLFxyXG4gIHRlbXBsYXRlVXJsOiAnLi9hcHAuaHRtbCcsXHJcbiAgc3R5bGVVcmw6ICcuL2FwcC5jc3MnXHJcbn0pXHJcbmV4cG9ydCBjbGFzcyBBcHAge1xyXG5cclxufSIsIjxhcHAtbmF2YmFyPjwvYXBwLW5hdmJhcj5cclxuXHJcbjxkaXYgY2xhc3M9XCJhcHAtc2hlbGxcIj5cbiAgPHJvdXRlci1vdXRsZXQ+PC9yb3V0ZXItb3V0bGV0PlxuPC9kaXY+XG4iLCJpbXBvcnQgeyBDb21tb25Nb2R1bGUgfSBmcm9tICdAYW5ndWxhci9jb21tb24nO1xuaW1wb3J0IHsgQ29tcG9uZW50IH0gZnJvbSAnQGFuZ3VsYXIvY29yZSc7XG5pbXBvcnQgeyBSb3V0ZXJMaW5rIH0gZnJvbSAnQGFuZ3VsYXIvcm91dGVyJztcbmltcG9ydCB7IEJvb2tpbmdTdGF0ZVNlcnZpY2UgfSBmcm9tICcuLi8uLi9zZXJ2aWNlcy9ib29raW5nLXN0YXRlJztcblxuQENvbXBvbmVudCh7XG4gIHNlbGVjdG9yOiAnYXBwLW5hdmJhcicsXG4gIHN0YW5kYWxvbmU6IHRydWUsXG4gIGltcG9ydHM6IFtDb21tb25Nb2R1bGUsIFJvdXRlckxpbmtdLFxuICB0ZW1wbGF0ZVVybDogJy4vbmF2YmFyLmh0bWwnLFxuICBzdHlsZVVybDogJy4vbmF2YmFyLmNzcydcbn0pXG5leHBvcnQgY2xhc3MgTmF2YmFyIHtcbiAgY29uc3RydWN0b3IocHVibGljIGJvb2tpbmdTdGF0ZTogQm9va2luZ1N0YXRlU2VydmljZSkge31cblxuICBnZXQgbGFzdEJvb2tpbmcoKSB7XG4gICAgcmV0dXJuIHRoaXMuYm9va2luZ1N0YXRlLmdldExhc3RCb29raW5nKCk7XG4gIH1cblxuICByZXBlYXRMYXN0Qm9va2luZygpIHtcbiAgICB0aGlzLmJvb2tpbmdTdGF0ZS5hcHBseUxhc3RCb29raW5nKCk7XG4gIH1cblxuICBzdGFydEJvb2tpbmcoKSB7XG4gICAgdGhpcy5ib29raW5nU3RhdGUuc3RhcnROZXdCb29raW5nKHsgYmFyYmVyUHJlZmVyZW5jZTogJ2FueScgfSk7XG4gICAgdGhpcy5ib29raW5nU3RhdGUudHJhY2soJ3N0YXJ0X2Jvb2tpbmcnLCB7IG1vZGU6ICduYXZiYXJfY3RhJyB9KTtcbiAgfVxufVxuIiwiPG5hdiBjbGFzcz1cImN1c3RvbS1uYXZiYXJcIj5cbiAgPGRpdiBjbGFzcz1cIm5hdi1zaGVsbFwiPlxuICAgIDxhIGNsYXNzPVwibG9nb1wiIHJvdXRlckxpbms9XCIvXCIgYXJpYS1sYWJlbD1cIk5vcnRoIEJhcmJlciBob21lXCI+XG4gICAgICA8c3BhbiBjbGFzcz1cImxvZ28tbWFya1wiIGFyaWEtaGlkZGVuPVwidHJ1ZVwiPk5CPC9zcGFuPlxuICAgICAgPHNwYW4+Tm9ydGggQmFyYmVyPC9zcGFuPlxuICAgIDwvYT5cblxuICAgIDxkaXYgY2xhc3M9XCJuYXYtYWN0aW9uc1wiPlxuICAgICAgPGJ1dHRvblxuICAgICAgICAqbmdJZj1cImxhc3RCb29raW5nXCJcbiAgICAgICAgdHlwZT1cImJ1dHRvblwiXG4gICAgICAgIGNsYXNzPVwic2Vjb25kYXJ5LWJ1dHRvbiBxdWljay1ib29rXCJcbiAgICAgICAgKGNsaWNrKT1cInJlcGVhdExhc3RCb29raW5nKClcIlxuICAgICAgPlxuICAgICAgICBCb29rIFNhbWUgQWdhaW5cbiAgICAgIDwvYnV0dG9uPlxuICAgICAgPGEgY2xhc3M9XCJwcmltYXJ5LWJ1dHRvbiBuYXYtY3RhXCIgcm91dGVyTGluaz1cIi9zZXJ2aWNlc1wiIChjbGljayk9XCJzdGFydEJvb2tpbmcoKVwiPkJvb2sgQXBwb2ludG1lbnQ8L2E+XG4gICAgPC9kaXY+XG4gIDwvZGl2PlxuPC9uYXY+XG4iXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7QUFBQSxTQUFTLDRCQUE0Qjs7O0FDQXJDLFNBQTRCLDBDQUEwQztBQUN0RSxTQUFTLG1CQUFtQix3QkFBd0I7QUFDcEQsU0FBUyxlQUFlLDZCQUE2Qjs7O0FDRnJELFNBQVMsY0FBYztBQUN2QixTQUF3QixjQUFjO0FBRy9CLElBQU0saUJBQWdDLE1BQUs7QUFHaEQsUUFBTSxPQUFPLE9BQU8sSUFBSTtBQUN4QixRQUFNLFNBQVMsT0FBTyxNQUFNO0FBRTVCLFNBQU8sS0FBSyxhQUFhLE9BQU8sT0FBTyxjQUFjLENBQUMsY0FBYyxDQUFDO0FBQ3ZFO0FBRU8sSUFBTSw2QkFBNEMsTUFBSztBQUU1RCxRQUFNLE9BQU8sT0FBTyxJQUFJO0FBQ3hCLFFBQU0sU0FBUyxPQUFPLE1BQU07QUFFNUIsU0FBTyxLQUFLLGFBQWEsT0FBTyxjQUFjLENBQUMsUUFBUSxDQUFDLElBQUk7QUFDOUQ7OztBQ2hCTyxJQUFNLFNBQWlCO0VBQzVCO0lBQ0UsTUFBTTtJQUNOLGVBQWUsTUFBTSxPQUFPLHFCQUFtQixFQUFFLEtBQUssQ0FBQyxNQUFNLEVBQUUsSUFBSTs7RUFFckU7SUFDRSxNQUFNOztJQUVOLGVBQWUsTUFBTSxPQUFPLHFCQUEyQixFQUFFLEtBQUssQ0FBQyxNQUFNLEVBQUUsUUFBUTs7O0VBR2pG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LFNBQUEsQ0FBQSxJQUFBLElBQUEscUJBQUEsR0FBQSxDQUFBLGNBQUEsWUFBQSxTQUFBLEdBQUEsYUFBQSxFQUFBLENBQUE7RUFBQTtBQUFBLEdBQUEsT0FBQSxjQUFBLGVBQUEsY0FBQSxlQUFBLEtBQUEsSUFBQSxDQUFBO0FBQUEsR0FBQSxPQUFBLGNBQUEsZUFBQSxlQUFBLFlBQUEsT0FBQSxZQUFBLElBQUEsR0FBQSw0QkFBQSxPQUFBLEVBQUEsT0FBQSxNQUFBLGVBQUEsRUFBQSxTQUFBLENBQUE7QUFBQSxHQUFBOzs7O0FGRGIsSUFBTyxNQUFQLE1BQU8sS0FBRzs7cUNBQUgsTUFBRztFQUFBOzZFQUFILE1BQUcsV0FBQSxDQUFBLENBQUEsVUFBQSxDQUFBLEdBQUEsT0FBQSxHQUFBLE1BQUEsR0FBQSxRQUFBLENBQUEsQ0FBQSxHQUFBLFdBQUEsQ0FBQSxHQUFBLFVBQUEsU0FBQSxhQUFBLElBQUEsS0FBQTtBQUFBLFFBQUEsS0FBQSxHQUFBO0FDWGhCLE1BQUEsd0JBQUEsR0FBQSxZQUFBO0FBRUEsTUFBQSw2QkFBQSxHQUFBLE9BQUEsQ0FBQTtBQUNFLE1BQUEsd0JBQUEsR0FBQSxlQUFBO0FBQ0YsTUFBQSwyQkFBQTs7b0JER1ksY0FBYyxNQUFNLEdBQUEsUUFBQSxDQUFBLDhHQUFBLEVBQUEsQ0FBQTs7O2dGQUluQixLQUFHLENBQUE7VUFQZkM7dUJBQ1csWUFBVSxZQUNSLE1BQUksU0FDUCxDQUFDLGNBQWMsTUFBTSxHQUFDLFVBQUEseUdBQUEsUUFBQSxDQUFBLGtIQUFBLEVBQUEsQ0FBQTs7OztpRkFJcEIsS0FBRyxFQUFBLFdBQUEsT0FBQSxVQUFBLGNBQUEsWUFBQSxHQUFBLENBQUE7QUFBQSxHQUFBOzs7Ozs7OytEQUFILEtBQUcsRUFBQSxTQUFBLENBQUFDLEdBQUEsR0FBQSxDQUFBLGNBQUEsUUFBQUQsVUFBQSxHQUFBLGFBQUEsRUFBQSxDQUFBO0VBQUE7QUFBQSxHQUFBLE9BQUEsY0FBQSxlQUFBLGNBQUEsWUFBQSxLQUFBLElBQUEsQ0FBQTtBQUFBLEdBQUEsT0FBQSxjQUFBLGVBQUEsZUFBQSxZQUFBLE9BQUEsWUFBQSxJQUFBLEdBQUEsNEJBQUEsT0FBQSxFQUFBLE9BQUEsTUFBQSxZQUFBLEVBQUEsU0FBQSxDQUFBO0FBQUEsR0FBQTs7O0FMUGhCLHFCQUFxQixLQUFLLFNBQVMsRUFDaEMsTUFBTSxDQUFDLFFBQVEsUUFBUSxNQUFNLEdBQUcsQ0FBQzsiLCJuYW1lcyI6WyJDb21wb25lbnQiLCJDb21wb25lbnQiLCJpMCJdfQ==

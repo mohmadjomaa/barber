@@ -1,0 +1,186 @@
+<section class="appointment-page">
+  <div class="page-shell simple-shell">
+    <app-booking-stepper [currentStep]="currentStep"></app-booking-stepper>
+
+    <main class="appointment-card surface-card" aria-live="polite">
+      <p class="error-note load-error" *ngIf="bookingError && !dates.length">{{ bookingError }}</p>
+
+      <section *ngIf="activePanel === 'service'" class="option-panel" aria-labelledby="service-title">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">Step 1 of 3</p>
+            <h1 id="service-title">Choose a service</h1>
+          </div>
+          <span>We’ll find the soonest available barber.</span>
+        </div>
+
+        <div class="simple-list service-list">
+          <button
+            *ngFor="let service of services"
+            type="button"
+            [class.selected]="serviceConfirmed && draft.serviceId === service.id"
+            (click)="selectService(service)"
+          >
+            <span>
+              <strong>{{ service.name }}</strong>
+              <small>{{ service.duration }} min</small>
+            </span>
+            <em>{{ service.price }} ILS</em>
+          </button>
+        </div>
+      </section>
+
+      <section *ngIf="activePanel === 'time'" class="option-panel" aria-labelledby="time-title">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">Step 1 of 3</p>
+            <h1 id="time-title">Pick a day and time</h1>
+          </div>
+          <button type="button" class="text-button" (click)="editService()">Change service</button>
+        </div>
+
+        <div class="booking-selection" aria-label="Current booking selection">
+          <strong>{{ selectedService?.name }}</strong>
+          <span>{{ draft.barberPreference === 'any' ? 'Best available barber' : barberLabel }}</span>
+          <button type="button" class="inline-action" (click)="editBarber()">Choose a barber</button>
+        </div>
+
+        <div class="shortcut-row" aria-label="Quick time choices">
+          <button type="button" (click)="pickEarliest()">Earliest</button>
+          <button type="button" (click)="applyShortcut('today')">Today</button>
+          <button type="button" (click)="applyShortcut('tomorrow')">Tomorrow</button>
+          <button type="button" (click)="applyShortcut('after-work')">After work</button>
+        </div>
+
+        <div class="date-strip" aria-label="Choose appointment date">
+          <button
+            *ngFor="let date of dates"
+            type="button"
+            [class.active]="draft.date === date.iso"
+            [class.unavailable]="date.hasSlots === false"
+            [disabled]="date.hasSlots === false"
+            [attr.aria-pressed]="draft.date === date.iso"
+            (click)="pickDate(date.iso)"
+          >
+            <span>{{ dateWeekday(date.iso) }}</span>
+            <strong>{{ dateMonthDay(date.iso) }}</strong>
+            <small *ngIf="date.hasSlots === false">{{ date.closed ? 'Closed' : 'Full' }}</small>
+          </button>
+        </div>
+
+        <p class="empty-availability" *ngIf="dates.length === 0">No available days. Please call the shop.</p>
+
+        <p class="empty-availability" *ngIf="isLoadingAvailability">Loading available times…</p>
+
+        <div class="slot-group" *ngFor="let group of slotGroups">
+          <h2>{{ timeSectionLabel(group) }}</h2>
+          <div class="slot-grid">
+            <app-time-slot
+              *ngFor="let slot of group.slots"
+              [label]="formatTime(slot.time)"
+              [selected]="timeConfirmed && draft.time === slot.time"
+              [disabled]="!!slot.disabled"
+              [accent]="slotAccent(slot)"
+              (picked)="chooseTime(slot.time)"
+            ></app-time-slot>
+          </div>
+        </div>
+
+        <p class="empty-availability" *ngIf="!isLoadingAvailability && dates.length > 0 && slotGroups.length === 0">No available times for this day. Try another day.</p>
+        <p class="error-note" *ngIf="bookingError && !isLoadingAvailability && dates.length">{{ bookingError }}</p>
+      </section>
+
+      <section *ngIf="activePanel === 'barber'" class="option-panel" aria-labelledby="barber-title">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">Optional</p>
+            <h1 id="barber-title">Choose your barber</h1>
+          </div>
+          <button type="button" class="text-button" (click)="useBestAvailable()">Use fastest available</button>
+        </div>
+
+        <div class="simple-list barber-list">
+          <button
+            *ngFor="let barber of compatibleBarbers"
+            type="button"
+            [class.selected]="draft.barberId === barber.id && draft.barberPreference === 'specific'"
+            (click)="selectBarber(barber)"
+          >
+            <img [src]="barber.image" [alt]="barber.name + ' barber portrait'" loading="lazy">
+            <span>
+              <strong>{{ barber.name }}</strong>
+              <small>{{ barber.specialty }}</small>
+            </span>
+            <em>{{ barber.nextAvailable }}</em>
+          </button>
+        </div>
+      </section>
+
+      <section *ngIf="activePanel === 'profile'" class="option-panel profile-panel" aria-labelledby="profile-title">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">Step 2 of 3</p>
+            <h1 id="profile-title">Your details</h1>
+          </div>
+          <button type="button" class="text-button" (click)="goBack()">Back to time</button>
+        </div>
+
+        <div class="booking-selection compact-selection" aria-label="Selected appointment">
+          <strong>{{ selectedService?.name }} · {{ formattedDate }} at {{ formatTime(draft.time) }}</strong>
+          <span>{{ barberLabel }}</span>
+        </div>
+
+        <div class="profile-grid">
+          <label class="profile-field" for="profile-name">
+            <span>Name</span>
+            <input id="profile-name" type="text" [(ngModel)]="draft.name" placeholder="Your name" autocomplete="name" [attr.aria-invalid]="!!profileErrors['name']">
+            <small *ngIf="profileErrors['name']">{{ profileErrors['name'] }}</small>
+          </label>
+          <label class="profile-field" for="profile-phone">
+            <span>Phone number</span>
+            <input id="profile-phone" type="tel" [ngModel]="draft.phone" (ngModelChange)="onPhoneInput($event)" placeholder="05XXXXXXXX" autocomplete="tel" inputmode="numeric" maxlength="10" pattern="05[0-9]{8}" [attr.aria-invalid]="!!profileErrors['phone']">
+            <small *ngIf="profileErrors['phone']">{{ profileErrors['phone'] }}</small>
+          </label>
+        </div>
+
+        <button type="button" class="primary-button panel-action" (click)="continueProfile()">Continue to confirmation</button>
+      </section>
+
+      <section *ngIf="activePanel === 'confirm'" class="option-panel confirm-panel" aria-labelledby="confirm-title">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">Step 3 of 3</p>
+            <h1 id="confirm-title">Confirm your booking</h1>
+          </div>
+          <button type="button" class="text-button" (click)="goBack()">Edit details</button>
+        </div>
+
+        <section class="confirmation-summary" aria-label="Booking summary">
+          <div><span>Service</span><strong>{{ selectedService?.name }}</strong></div>
+          <div><span>When</span><strong>{{ formattedDate }} at {{ formatTime(draft.time) }}</strong></div>
+          <div><span>Barber</span><strong>{{ barberLabel }}</strong></div>
+          <div><span>Price</span><strong>{{ selectedService?.price }} ILS</strong></div>
+        </section>
+
+        <section class="completion-note" aria-label="Complete booking">
+          <strong>Ready to finish?</strong>
+          <span>Click Confirm Booking to complete your appointment.</span>
+        </section>
+        <p class="trust-note">SMS confirmation will be sent to {{ draft.phone }}. Pay in shop.</p>
+        <p class="error-note" *ngIf="bookingError">{{ bookingError }}</p>
+
+        <button type="button" class="primary-button panel-action" [disabled]="isConfirming" (click)="confirmBooking()">
+          {{ isConfirming ? 'Confirming...' : 'Confirm Booking' }}
+        </button>
+      </section>
+    </main>
+  </div>
+
+  <div class="mobile-booking-bar" aria-label="Current booking">
+    <div>
+      <strong>{{ bottomSummary.title }}</strong>
+      <span>{{ bottomSummary.meta }}</span>
+    </div>
+    <button type="button" class="primary-button" [disabled]="isConfirming" (click)="continue()">{{ continueLabel }}</button>
+  </div>
+</section>

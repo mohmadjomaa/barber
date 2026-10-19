@@ -1,0 +1,94 @@
+<section class="home-page">
+  <div class="page-shell">
+    <section *ngIf="confirmationBooking" class="booking-complete-banner" role="status" aria-live="polite">
+      <span class="booking-complete-icon" aria-hidden="true">✓</span>
+      <div>
+        <strong>Booking complete</strong>
+        <span>Your appointment has been confirmed: {{ confirmationMessage }}</span>
+      </div>
+    </section>
+
+    <section class="hero-block" aria-labelledby="home-title">
+      <div class="hero-copy">
+        <p class="eyebrow">North Barber</p>
+        <h1 id="home-title">Book your next haircut in minutes.</h1>
+        <p class="availability-line" *ngIf="nextSlot.time">Next available: <strong>{{ formattedNextSlot }} at {{ formattedNextTime }}</strong></p>
+
+        <a routerLink="/services" class="primary-button hero-button" (click)="startBooking()">Book Appointment</a>
+
+        <button
+          *ngIf="lastBooking"
+          type="button"
+          class="repeat-button"
+          (click)="repeatLastBooking()"
+        >
+          Book Same Again <span>{{ lastBookingLabel }}</span>
+        </button>
+
+        <p class="trust-note">No account needed. SMS confirmation. Pay in shop.</p>
+      </div>
+    </section>
+
+    <section class="services-section" aria-labelledby="services-title">
+      <div class="section-header">
+        <div>
+          <p class="eyebrow">Services</p>
+          <h2 id="services-title" class="section-title">Choose your service</h2>
+        </div>
+        <a routerLink="/services" class="text-link" (click)="startBooking()">View all services</a>
+      </div>
+
+      <div class="service-grid">
+        <a
+          *ngFor="let service of previewServices"
+          class="service-card surface-card"
+          routerLink="/services"
+          [queryParams]="{ service: service.id }"
+          (click)="startBooking(service.id)"
+        >
+          <h3>{{ service.name }}</h3>
+          <div class="service-meta">
+            <span>{{ service.duration }} min</span>
+            <strong>{{ service.price }} ILS</strong>
+          </div>
+          <p class="service-next-slot" *ngIf="serviceNextSlots[service.id]"><span>Next available:</span> {{ serviceNextSlotLabel(service.id) }}</p>
+        </a>
+      </div>
+    </section>
+
+    <section class="barber-section" aria-labelledby="barbers-title">
+      <div class="section-header">
+        <div>
+          <p class="eyebrow">Our barbers</p>
+          <h2 id="barbers-title" class="section-title">Meet the team</h2>
+        </div>
+      </div>
+
+      <div class="barber-grid">
+        <article *ngFor="let barber of barbers" class="barber-card">
+          <img
+            [src]="barber.image"
+            [attr.alt]="barber.name + ' barber portrait'"
+            loading="lazy"
+          >
+          <div>
+            <h3>{{ barber.name }}</h3>
+            <p>{{ barber.specialty }}</p>
+            <span>{{ barber.nextAvailable }}</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <footer class="customer-footer">
+      <div>
+        <strong>North Barber</strong>
+        <span>Downtown · Open daily 09:30–19:00</span>
+      </div>
+      <div>
+        <span>Pay in shop</span>
+        <a href="tel:+972549949132" dir="ltr">+972 54 994 9132</a>
+      </div>
+    </footer>
+  </div>
+</section>

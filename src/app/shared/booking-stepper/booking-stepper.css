@@ -1,0 +1,77 @@
+.booking-stepper {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 28px;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 56px;
+  padding: 10px 12px;
+  border: 1px solid rgba(30, 136, 229, 0.28);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.035);
+  color: rgba(244, 247, 251, 0.58);
+}
+
+.step-index {
+  display: inline-flex;
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  flex: 0 0 34px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid rgba(30, 136, 229, 0.32);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(244, 247, 251, 0.72);
+  font-weight: 800;
+}
+
+.step-label {
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.step.active {
+  border-color: rgba(30, 136, 229, 0.32);
+  color: var(--body-text);
+}
+
+.step.active .step-index {
+  background: var(--accent);
+  color: var(--ink-black);
+  border-color: var(--accent);
+  box-shadow: 0 0 20px rgba(30, 136, 229, 0.28);
+}
+
+@media (max-width: 920px) {
+  .booking-stepper {
+    display: flex;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .step {
+    min-width: 140px;
+  }
+}
+
+@media (max-width: 720px) {
+  .step-label {
+    display: none;
+  }
+
+  .step {
+    min-width: 48px;
+  }
+}

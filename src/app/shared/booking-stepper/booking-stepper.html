@@ -1,0 +1,11 @@
+<ol class="booking-stepper" aria-label="Booking progress">
+  <li
+    *ngFor="let step of steps"
+    class="step"
+    [class.active]="step.id === currentStep"
+    [class.complete]="step.id < currentStep"
+  >
+    <span class="step-index">{{ step.id }}</span>
+    <span class="step-label">{{ step.label }}</span>
+  </li>
+</ol>

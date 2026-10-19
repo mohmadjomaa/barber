@@ -1,0 +1,115 @@
+<div class="admin-page">
+  <div class="admin-box">
+    <p class="eyebrow">Operations</p>
+    <h1>Admin dashboard</h1>
+
+    <div class="admin-dashboard-grid">
+      <section class="admin-panel booking-summary" aria-label="Customer bookings summary">
+        <div class="panel-title">
+          <h2>Customer bookings</h2>
+          <span *ngIf="!isLoadingBookings">{{ upcomingBookingCount }} upcoming</span>
+        </div>
+        <div class="section-skeleton summary-skeleton" *ngIf="isLoadingBookings" aria-label="Loading bookings"><span></span><span></span><span></span></div>
+        <p class="error-note" *ngIf="bookingsLoadError">{{ bookingsLoadError }}</p>
+        <p class="empty-state compact-empty" *ngIf="!isLoadingBookings && !bookingsLoadError && upcomingBookingCount === 0">No upcoming bookings.</p>
+        <ol *ngIf="!isLoadingBookings && !bookingsLoadError && upcomingBookingCount" class="booking-summary-list">
+          <li *ngFor="let booking of upcomingBookings.slice(0, 3)">
+            <strong>{{ formatTime(booking.time) }}</strong><span>{{ booking.name }} · {{ booking.barber }}</span><small>{{ bookingDateLabel(booking) }}</small>
+          </li>
+        </ol>
+        <a *ngIf="!isLoadingBookings" routerLink="/admin/bookings" class="view-bookings-link">View all bookings →</a>
+      </section>
+
+      <section class="admin-panel schedule-panel" aria-label="Shop schedule settings">
+        <div class="panel-title"><h2>Working days and hours</h2><span>Controls customer slots.</span></div>
+        <div class="section-skeleton form-skeleton" *ngIf="isLoadingSchedule" aria-label="Loading working hours"><span></span><span></span><span></span></div>
+        <p class="error-note" *ngIf="scheduleLoadError">{{ scheduleLoadError }}</p>
+        <ng-container *ngIf="!isLoadingSchedule && !scheduleLoadError">
+          <div class="day-toggle-row"><label *ngFor="let day of dayOptions"><input type="checkbox" [checked]="schedule.workingDays.includes(day.value)" (change)="toggleWorkingDay(day.value)"><span>{{ day.label }}</span></label></div>
+          <div class="form-grid compact-form-grid">
+            <label>Open from<input type="time" [(ngModel)]="schedule.openTime"></label>
+            <label>Open until<input type="time" [(ngModel)]="schedule.closeTime"></label>
+          </div>
+          <div class="panel-actions"><button type="button" class="save-btn" (click)="saveSchedule()">Save Schedule</button></div>
+          <p class="success-note" *ngIf="scheduleMessage">{{ scheduleMessage }}</p><p class="error-note" *ngIf="scheduleError">{{ scheduleError }}</p>
+        </ng-container>
+      </section>
+
+      <section class="admin-panel barbers-panel" aria-label="Manage barbers">
+        <div class="panel-title"><div><h2>Manage barbers</h2><span>Shown in customer booking.</span></div><button type="button" class="service-action" (click)="openAddBarber()" [attr.aria-expanded]="isAddingBarber">+ Add Barber</button></div>
+        <div class="section-skeleton barber-skeleton" *ngIf="isLoadingBarbers" aria-label="Loading barbers"><span></span><span></span></div>
+        <p class="error-note" *ngIf="barbersLoadError">{{ barbersLoadError }}</p>
+        <ng-container *ngIf="!isLoadingBarbers && !barbersLoadError">
+          <div class="barber-admin-list">
+            <article *ngFor="let barber of barbers">
+              <img [src]="barber.image" [alt]="barber.name + ' barber portrait'">
+              <div><strong>{{ barber.name }}</strong><span>{{ barber.title }}</span><small>{{ barber.specialty || barber.nextAvailable }}</small></div>
+              <button type="button" class="delete-btn compact-delete" (click)="deleteBarber(barber)">Delete</button>
+            </article>
+          </div>
+          <div class="collapsible-form" *ngIf="isAddingBarber">
+            <div class="form-grid compact-form-grid barber-form">
+              <label>Barber name<input type="text" [(ngModel)]="barberForm.name" placeholder="Ahmed"></label>
+              <label>Title<input type="text" [(ngModel)]="barberForm.title" placeholder="Fade Specialist"></label>
+              <label>Specialty<input type="text" [(ngModel)]="barberForm.specialty" placeholder="Skin fades and sharp outlines"></label>
+              <label>Availability text<input type="text" [(ngModel)]="barberForm.nextAvailable" placeholder="Available today"></label>
+              <label class="wide-field">Image path<input type="text" [(ngModel)]="barberForm.image" placeholder="/img/jpg1.png"></label>
+            </div>
+            <div class="panel-actions"><button type="button" class="service-action secondary" (click)="cancelAddBarber()">Cancel</button><button type="button" class="save-btn" (click)="addBarber()">Add Barber</button></div>
+          </div>
+          <p class="success-note" *ngIf="barberMessage">{{ barberMessage }}</p><p class="error-note" *ngIf="barberError">{{ barberError }}</p>
+        </ng-container>
+      </section>
+
+      <section class="admin-panel services-panel" aria-label="Manage services">
+        <div class="panel-title services-title-row"><div><h2>Manage services</h2><span>Changes update the customer catalog.</span></div><button type="button" class="service-action add-service-button" (click)="openAddService()">+ Add Service</button></div>
+        <div class="section-skeleton service-skeleton" *ngIf="isLoadingServices" aria-label="Loading services"><span></span><span></span></div>
+        <p class="error-note" *ngIf="servicesLoadError">{{ servicesLoadError }}</p>
+        <ng-container *ngIf="!isLoadingServices && !servicesLoadError">
+          <div class="service-management-list">
+            <article class="service-admin-row" *ngFor="let service of adminServices">
+              <div class="service-summary-row"><strong>{{ service.name }}</strong><span>{{ service.price }} ILS</span><span>{{ service.duration }} min</span><span class="service-status" [class.inactive]="service.active === false">{{ service.active === false ? 'Inactive' : 'Active' }}</span><button type="button" class="service-action" (click)="editService(service)">Edit</button></div>
+              <div class="service-editor" *ngIf="editingService as draft" [hidden]="draft.id !== service.id || isAddingService">
+                <div class="service-editor-grid">
+                  <label>Service name<input type="text" [(ngModel)]="draft.name"></label><label>Price (ILS)<input type="number" min="0" [(ngModel)]="draft.price"></label><label>Duration (minutes)<input type="number" min="1" [(ngModel)]="draft.duration"></label>
+                  <label class="wide-field">Description<input type="text" [(ngModel)]="draft.description"></label><label class="service-active-control"><input type="checkbox" [(ngModel)]="draft.active"> Active for customer booking</label>
+                </div>
+                <div class="service-editor-actions"><button type="button" class="service-action secondary" (click)="cancelServiceEdit()">Cancel</button><button type="button" class="service-action" (click)="saveServiceEditor()">Save Changes</button></div>
+              </div>
+            </article>
+            <article class="service-admin-row service-create-editor" *ngIf="isAddingService && editingService as draft">
+              <div class="service-editor-grid">
+                <label>Service name<input type="text" [(ngModel)]="draft.name" placeholder="Premium Cut"></label><label>Price (ILS)<input type="number" min="0" [(ngModel)]="draft.price"></label><label>Duration (minutes)<input type="number" min="1" [(ngModel)]="draft.duration"></label>
+                <label class="wide-field">Description<input type="text" [(ngModel)]="draft.description" placeholder="Service description"></label><label class="service-active-control"><input type="checkbox" [(ngModel)]="draft.active"> Active for customer booking</label>
+              </div>
+              <div class="service-editor-actions"><button type="button" class="service-action secondary" (click)="cancelServiceEdit()">Cancel</button><button type="button" class="service-action" (click)="saveServiceEditor()">Add Service</button></div>
+            </article>
+          </div>
+          <p class="success-note" *ngIf="serviceMessage">{{ serviceMessage }}</p><p class="error-note" *ngIf="serviceError">{{ serviceError }}</p>
+        </ng-container>
+      </section>
+
+      <section class="admin-panel create-booking-panel" aria-label="Create booking as admin">
+        <div class="panel-title"><div><h2>Create booking</h2><span>Create an appointment for a customer.</span></div><button type="button" class="service-action" (click)="openCreateBooking()" [attr.aria-expanded]="isCreatingBooking">+ New Booking</button></div>
+        <ng-container *ngIf="isCreatingBooking">
+          <div class="section-skeleton form-skeleton" *ngIf="isLoadingServices || isLoadingBarbers || isLoadingSchedule" aria-label="Loading booking form"><span></span><span></span><span></span></div>
+          <p class="error-note" *ngIf="servicesLoadError || barbersLoadError || scheduleLoadError">The booking form needs services, barbers, and working hours to load.</p>
+          <ng-container *ngIf="!isLoadingServices && !isLoadingBarbers && !isLoadingSchedule && !servicesLoadError && !barbersLoadError && !scheduleLoadError">
+            <div class="form-grid compact-form-grid">
+              <label>Customer name<input type="text" [(ngModel)]="adminBooking.name" placeholder="Customer name"></label><label>Phone<input type="tel" [(ngModel)]="adminBooking.phone" placeholder="+972 5X XXX XXXX"></label>
+              <label>Service<select [(ngModel)]="adminBooking.serviceId" (change)="onAdminServiceChange()"><option *ngFor="let service of services" [value]="service.id">{{ service.name }}</option></select></label>
+              <label>Barber<select [(ngModel)]="adminBooking.barberId" (change)="refreshAdminAvailability()"><option *ngFor="let barber of compatibleAdminBarbers" [value]="barber.id">{{ barber.name }}</option></select></label>
+              <label>Date<select [(ngModel)]="adminBooking.date" (change)="refreshAdminAvailability()"><option *ngFor="let date of adminDates" [value]="date.iso" [disabled]="date.hasSlots === false">{{ date.display }}{{ date.hasSlots === false ? (date.closed ? ' (Closed)' : ' (Full)') : '' }}</option></select></label>
+              <label>Time<select [(ngModel)]="adminBooking.time" [disabled]="isLoadingAvailability"><option *ngFor="let slot of adminSlots" [value]="slot.time">{{ formatTime(slot.time) }}</option></select></label>
+            </div>
+            <p class="compact-loading" *ngIf="isLoadingAvailability">Loading available times…</p>
+            <label class="wide-field compact-notes">Notes<textarea rows="2" [(ngModel)]="adminBooking.notes" placeholder="Optional notes"></textarea></label>
+            <p class="success-note" *ngIf="adminBookingMessage">{{ adminBookingMessage }}</p><p class="error-note" *ngIf="adminBookingError">{{ adminBookingError }}</p>
+            <div class="panel-actions"><button type="button" class="service-action secondary" (click)="cancelCreateBooking()">Cancel</button><button type="button" class="save-btn" (click)="createAdminBooking()">Create Booking</button></div>
+          </ng-container>
+        </ng-container>
+      </section>
+    </div>
+    <button type="button" (click)="logout()" class="back-home">Sign out</button>
+  </div>
+</div>

@@ -1,0 +1,11 @@
+<button
+  type="button"
+  class="time-slot"
+  [class.selected]="selected"
+  [disabled]="disabled"
+  [attr.aria-pressed]="selected"
+  (click)="picked.emit()"
+>
+  <span>{{ label }}</span>
+  <small *ngIf="accent">{{ accent }}</small>
+</button>

@@ -1,0 +1,23 @@
+<div class="admin-page">
+  <form class="login-box" (ngSubmit)="login()" novalidate>
+    <p class="eyebrow">{{ text('Admin access') }}</p>
+    <h1>{{ text('Booking dashboard') }}</h1>
+
+    <label class="sr-only" for="admin-password">{{ text('Admin password') }}</label>
+    <input
+      id="admin-password"
+      name="password"
+      type="password"
+      [placeholder]="text('Enter Password')"
+      autocomplete="current-password"
+      [(ngModel)]="password"
+      [disabled]="isSubmitting"
+      required
+    >
+
+    <button type="submit" [disabled]="isSubmitting">
+      {{ text(isSubmitting ? 'Signing in...' : 'Enter Dashboard') }}
+    </button>
+    <p class="error-note" *ngIf="loginError" role="alert">{{ text(loginError) }}</p>
+  </form>
+</div>

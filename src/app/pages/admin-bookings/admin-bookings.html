@@ -1,0 +1,74 @@
+<main class="bookings-page">
+  <section class="bookings-box">
+    <a routerLink="/admin" class="back-link">← Back to Admin</a>
+    <p class="eyebrow">Admin / Bookings</p>
+    <h1>Customer bookings</h1>
+
+    <div class="toolbar" aria-label="Booking filters">
+      <div class="filter-row">
+        <button type="button" [class.active]="filter === 'today'" (click)="setFilter('today')">Today</button>
+        <button type="button" [class.active]="filter === 'upcoming'" (click)="setFilter('upcoming')">Upcoming</button>
+        <button type="button" [class.active]="filter === 'all'" (click)="setFilter('all')">All active</button>
+      </div>
+      <input
+        type="search"
+        [(ngModel)]="searchText"
+        (input)="updateSearch()"
+        placeholder="Search customer, barber, service, or date"
+        aria-label="Search bookings"
+      >
+    </div>
+
+    <p class="empty-state" *ngIf="isLoading">Loading bookings…</p>
+    <p class="success-note" *ngIf="actionMessage">{{ actionMessage }}</p>
+    <p class="error-note" *ngIf="actionError">{{ actionError }}</p>
+
+    <div class="table-scroll" *ngIf="!isLoading && pageBookings.length">
+      <table>
+        <thead>
+          <tr>
+            <th><button type="button" (click)="sortBy('customer')">Customer</button></th>
+            <th><button type="button" (click)="sortBy('service')">Service</button></th>
+            <th><button type="button" (click)="sortBy('barber')">Barber</button></th>
+            <th><button type="button" (click)="sortBy('date')">Date</button></th>
+            <th>Time</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let booking of pageBookings">
+            <td data-label="Customer">{{ booking.name }}</td>
+            <td data-label="Service">{{ booking.service }}</td>
+            <td data-label="Barber">{{ booking.barber }}</td>
+            <td data-label="Date">{{ booking.date }}</td>
+            <td data-label="Time">{{ formatTime(booking.time) }}</td>
+            <td data-label="Action">
+              <button
+                type="button"
+                class="cancel-button"
+                [disabled]="isDeletingBookingId === booking.id"
+                (click)="cancelBooking(booking)"
+              >{{ isDeletingBookingId === booking.id ? 'Cancelling…' : 'Cancel' }}</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="empty-state" *ngIf="!isLoading && !pageBookings.length">No bookings match this view.</p>
+
+    <nav class="pagination" *ngIf="!isLoading && filteredBookings.length > pageSize" aria-label="Bookings pages">
+      <span>Showing {{ rangeStart }}–{{ rangeEnd }} of {{ filteredBookings.length }}</span>
+      <div>
+        <button type="button" [disabled]="page === 1" (click)="goToPage(page - 1)">Previous</button>
+        <button
+          *ngFor="let pageNumber of visiblePages"
+          type="button"
+          [class.active]="pageNumber === page"
+          (click)="goToPage(pageNumber)"
+        >{{ pageNumber }}</button>
+        <button type="button" [disabled]="page === pageCount" (click)="goToPage(page + 1)">Next</button>
+      </div>
+    </nav>
+  </section>
+</main>

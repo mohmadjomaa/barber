@@ -1,0 +1,42 @@
+.time-slot {
+  min-height: 56px;
+  width: 100%;
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--body-text);
+  display: grid;
+  gap: 3px;
+  align-content: center;
+  justify-items: start;
+  padding: 10px 12px;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.time-slot:hover,
+.time-slot:focus-visible {
+  border-color: rgba(30, 136, 229, 0.45);
+  transform: translateY(-1px);
+}
+
+.time-slot.selected {
+  border-color: var(--accent);
+  background: rgba(30, 136, 229, 0.14);
+}
+
+.time-slot:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+  text-decoration: line-through;
+  transform: none;
+}
+
+.time-slot span {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.time-slot small {
+  color: var(--accent);
+  font-size: 0.78rem;
+}

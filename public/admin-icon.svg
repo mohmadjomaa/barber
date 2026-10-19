@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#06101c"/>
+  <rect x="32" y="32" width="448" height="448" rx="88" fill="#0b141f" stroke="#1e88e5" stroke-width="14"/>
+  <text x="256" y="315" fill="#1e88e5" font-family="Arial, sans-serif" font-size="184" font-weight="800" letter-spacing="-18" text-anchor="middle">NB</text>
+  <path d="M160 366h192" stroke="#f4f7fb" stroke-width="18" stroke-linecap="round"/>
+  <text x="256" y="430" fill="#f4f7fb" font-family="Arial, sans-serif" font-size="42" font-weight="700" text-anchor="middle">ADMIN</text>
+</svg>

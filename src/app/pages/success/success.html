@@ -1,0 +1,73 @@
+<section class="success-page">
+  <div class="page-shell success-shell">
+    <main class="success-card" aria-label="Booking confirmation">
+      <ng-container *ngIf="booking; else deletedState">
+        <section class="confirmation-copy">
+          <div class="completion-banner" role="status" aria-live="polite">
+            <span class="completion-icon" aria-hidden="true">✓</span>
+            <span>
+              <strong>Booking complete</strong>
+              <small>Your appointment has been successfully confirmed.</small>
+            </span>
+          </div>
+          <p class="returning-home">Returning to the home page in {{ secondsUntilHome }} seconds.</p>
+          <p class="eyebrow">Confirmation</p>
+          <h1>You’re all set.</h1>
+          <p class="lead">{{ bookingLead }}</p>
+
+          <div class="notice" aria-label="Booking reminder and payment">
+            <strong>We’ve saved your appointment.</strong>
+            <span>{{ reminderAndPaymentLabel }}</span>
+          </div>
+
+          <div class="success-actions" aria-label="Booking actions">
+            <a routerLink="/" class="success-action action-outline">Back to Home</a>
+            <button type="button" class="success-action action-outline" (click)="repeatLastBooking()">Book Same Again</button>
+          </div>
+
+          <button type="button" class="delete-text-button" (click)="deleteBooking()">Delete booking</button>
+        </section>
+
+        <aside class="ticket-card" aria-label="Appointment details">
+          <div class="ticket-top">
+            <span>{{ formattedDate }}</span>
+            <strong>{{ formattedTime }}</strong>
+          </div>
+
+          <div class="ticket-row">
+            <span>Service</span>
+            <strong>{{ booking.service }}</strong>
+          </div>
+          <div class="ticket-row">
+            <span>Barber</span>
+            <strong>{{ booking.barber }}</strong>
+          </div>
+          <div class="ticket-split">
+            <div>
+              <span>Duration</span>
+              <strong>{{ booking.duration }} min</strong>
+            </div>
+            <div>
+              <span>Price</span>
+              <strong>{{ booking.price }} ILS</strong>
+            </div>
+          </div>
+
+          <div class="ticket-footer">
+            <span>Downtown North Barber</span>
+            <a href="tel:+972549949132">+972 54 994 9132</a>
+          </div>
+        </aside>
+      </ng-container>
+
+      <ng-template #deletedState>
+        <section class="deleted-state">
+          <p class="eyebrow">Confirmation</p>
+          <h1>Booking deleted</h1>
+          <p>{{ deletedMessage || 'No active booking is selected.' }}</p>
+          <a class="success-action action-gold" routerLink="/services">Book New Appointment</a>
+        </section>
+      </ng-template>
+    </main>
+  </div>
+</section>

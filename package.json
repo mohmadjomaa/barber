@@ -1,0 +1,40 @@
+{
+  "name": "barber-booking-system",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "concurrently -k -n API,WEB -c cyan,magenta \"npm run dev:api\" \"npm run dev:web\"",
+    "dev": "npm run start",
+    "dev:web": "ng serve --port 4200",
+    "dev:api": "npm --prefix server run dev",
+    "start:api": "npm run dev:api",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test"
+  },
+  "private": true,
+  "packageManager": "npm@11.6.1",
+  "dependencies": {
+    "@angular/common": "^21.2.0",
+    "@angular/compiler": "^21.2.0",
+    "@angular/core": "^21.2.0",
+    "@angular/forms": "^21.2.0",
+    "@angular/platform-browser": "^21.2.0",
+    "@angular/router": "^21.2.0",
+    "@angular/service-worker": "^21.2.9",
+    "bootstrap": "^5.3.8",
+    "mongoose": "^9.10.1",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^21.2.7",
+    "@angular/cli": "^21.2.7",
+    "@angular/compiler-cli": "^21.2.0",
+    "concurrently": "^9.2.1",
+    "jsdom": "^28.0.0",
+    "prettier": "^3.8.1",
+    "typescript": "~5.9.2",
+    "vitest": "^4.0.8"
+  }
+}

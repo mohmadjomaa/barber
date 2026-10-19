@@ -1,0 +1,129 @@
+.custom-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  backdrop-filter: blur(14px);
+  background: rgba(11, 15, 20, 0.92);
+  border-bottom: 1px solid rgba(244, 247, 251, 0.08);
+}
+
+.nav-shell {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  min-height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Bebas Neue', 'Segoe UI', sans-serif;
+  font-size: 2rem;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.logo-mark {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(30, 136, 229, 0.76);
+  border-radius: 10px;
+  background: rgba(30, 136, 229, 0.12);
+  box-shadow: 0 0 18px rgba(30, 136, 229, 0.2);
+  color: var(--warm-ivory);
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.language-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+}
+
+.language-switcher button {
+  min-height: 30px;
+  padding: 0 7px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--muted-text);
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.language-switcher button.active {
+  background: rgba(30, 136, 229, 0.24);
+  color: var(--warm-ivory);
+}
+
+.nav-cta {
+  padding: 10px 12px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: var(--warm-ivory);
+}
+
+.quick-book {
+  min-height: 42px;
+  padding: 0 16px;
+}
+
+.nav-cta {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  color: var(--ink-black);
+}
+
+@media (max-width: 920px) {
+  .nav-shell {
+    width: min(100% - 24px, 1180px);
+    flex-wrap: wrap;
+    padding: 14px 0;
+  }
+
+  .nav-actions {
+    margin-inline-start: auto;
+  }
+
+  .quick-book {
+    display: none;
+  }
+
+  .language-switcher { margin-inline-start: auto; }
+}
+
+@media (max-width: 560px) {
+  .nav-shell {
+    flex-wrap: nowrap;
+  }
+
+  .logo {
+    font-size: 1.7rem;
+  }
+
+  .logo-mark {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    font-size: 0.9rem;
+  }
+}
